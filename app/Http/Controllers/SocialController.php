@@ -41,6 +41,7 @@ class SocialController extends Controller
                 $getInfo = Socialite::driver($provider)->stateless()->user();
             }
             $user = $this->createUser($getInfo,$provider);
+            dd($getInfo);
             Auth::login($user);
             $user = Auth::user();
             $token = $user->createToken('FundMyLaptop')->accessToken;
