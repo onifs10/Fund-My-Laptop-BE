@@ -13,19 +13,30 @@ use PHPUnit\Exception;
 class SocialController extends Controller
 {
     //
+    /**
+     * @param $provider
+     * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\RedirectResponse
+     */
     public function redirect($provider)
     {   try{
             return Socialite::driver($provider)->redirect();
         }catch (\Exception $exception){
-            return response()->json(['error' => 'Unauthorized', 'message'=>$exception->getMessage()], 401);
+            return response()->json(['error' => 'Unauthorized', 'message'=>$exception->getMessage()], 404);
     }
 
     }
+
+    /**
+     * @param $provider
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
     public function callback($provider)
     {
         try{
             if($provider == 'twitter'){
                 $getInfo = Socialite::driver($provider)->user();
+                dd($getInfo);
             }else{
                 $getInfo = Socialite::driver($provider)->stateless()->user();
             }
@@ -74,7 +85,7 @@ class SocialController extends Controller
                             'provider_id' => $getInfo->id,
                         ]);
                         return $user;
-                    };
+                    }
                 } else {
                     $user = User::create([
                         'email' => $getInfo->email,
